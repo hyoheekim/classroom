@@ -212,7 +212,7 @@
     <p>Drive 폴더의 회의록을 날짜·키워드로 검색합니다</p>
   </div>
   <div style="display:flex; gap:10px; align-items:center;">
-    <button class="btn-new" id="btnNew" onclick="createMeeting()">+ 새 회의록 작성</button>
+    <a class="btn-new" id="btnNew" href="https://script.google.com/macros/s/AKfycbwO62KG2BNS5kEYPkMyIUCWH2-6GLGJ88EpCBxOlgZkOfw4t1j1DuVFaaTIM1Nui9YsPw/exec?action=create" target="_blank" rel="noopener">+ 새 회의록 작성</a>
     <a class="btn-folder" href="https://drive.google.com/drive/folders/1IlPv-Hb20w32kcRFBGPKGKvSQaaDFvdl" target="_blank">📁 회의록 폴더</a>
   </div>
 </header>
@@ -311,7 +311,13 @@
     var btn = document.getElementById('btnNew');
     btn.disabled    = true;
     btn.textContent = '생성 중...';
-    window.open(SCRIPT_URL + '?action=create', '_blank');
+    var a = document.createElement('a');
+    a.href = SCRIPT_URL + '?action=create';
+    a.target = '_blank';
+    a.rel = 'noopener';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
     setTimeout(function() {
       btn.disabled    = false;
       btn.textContent = '+ 새 회의록 작성';
