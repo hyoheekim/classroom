@@ -212,7 +212,7 @@
     <p>Drive 폴더의 회의록을 날짜·키워드로 검색합니다</p>
   </div>
   <div style="display:flex; gap:10px; align-items:center;">
-    <a class="btn-new" id="btnNew" href="https://script.google.com/macros/s/AKfycbwO62KG2BNS5kEYPkMyIUCWH2-6GLGJ88EpCBxOlgZkOfw4t1j1DuVFaaTIM1Nui9YsPw/exec?action=create" target="_blank" rel="noopener">+ 새 회의록 작성</a>
+    <button class="btn-new" id="btnNew" onclick="createMeeting()">+ 새 회의록 작성</button>
     <a class="btn-folder" href="https://drive.google.com/drive/folders/1IlPv-Hb20w32kcRFBGPKGKvSQaaDFvdl" target="_blank">📁 회의록 폴더</a>
   </div>
 </header>
@@ -245,7 +245,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
-  var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwO62KG2BNS5kEYPkMyIUCWH2-6GLGJ88EpCBxOlgZkOfw4t1j1DuVFaaTIM1Nui9YsPw/exec';
+  var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyu1UJ2PrS8yD-Oj6tE8fDT1HGck-KY5ciJa8jnjNB68VUkUGLYpuR6KY7Iw-etp3MN5g/exec';
 
   window.onload = function() { doSearch(); };
 
@@ -311,19 +311,27 @@
     var btn = document.getElementById('btnNew');
     btn.disabled    = true;
     btn.textContent = '생성 중...';
-    var a = document.createElement('a');
-    a.href = SCRIPT_URL + '?action=create';
-    a.target = '_blank';
-    a.rel = 'noopener';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(function() {
-      btn.disabled    = false;
-      btn.textContent = '+ 새 회의록 작성';
-      showToast('📄 새 회의록이 생성됐습니다');
-      doSearch();
-    }, 3000);
+
+    fetch(SCRIPT_URL + '?action=create')
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        btn.disabled    = false;
+        btn.textContent = '+ 새 회의록 작성';
+        var a = document.createElement('a');
+        a.href   = data.url;
+        a.target = '_blank';
+        a.rel    = 'noopener';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        showToast('📄 ' + data.title + ' 생성됨');
+        doSearch();
+      })
+      .catch(function() {
+        btn.disabled    = false;
+        btn.textContent = '+ 새 회의록 작성';
+        showToast('오류가 발생했습니다. 다시 시도해 주세요.');
+      });
   }
 
   function resetForm() {
